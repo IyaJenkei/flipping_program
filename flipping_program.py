@@ -11,6 +11,8 @@ craigslist_soup = bs.BeautifulSoup(requests.get(BASE_URL).text, 'lxml')
 
 APP_ID = ebaykey.ebay_key()
 
+item = input("what item do you want? ")
+
 
 def create_craigslist_dict(soup):
 
@@ -24,9 +26,6 @@ def create_craigslist_dict(soup):
     for row in soup.find_all('p', class_='result-info'):
         for price in row.find_all('span', class_='result-price'):
             price_list.append(int((price.string.lstrip("$"))))
-            #I dont think this is aligning with the title list.
-            #I'm not sure what it's doing when it goes through and finds something
-            #without a price.
 
     craigslist_dict = dict(zip(title_list, price_list))
 
@@ -51,13 +50,16 @@ def average_ebay_price(item):
 
     return(mean(price_list))
 
-def find_deals(dict):
 
-    for item, price in cl_dict.items():
-        if int(price) < int((average_ebay_price(item) * .5)):
-            print(item, price, average_ebay_price(item))
+def find_deals(dict,item):
+
+    avg_price = average_ebay_price(item)
+
+    for item1, price in cl_dict.items():
+        if int(price) < int((avg_price * .5)):
+            print(item, price, avg_price)
 
 
 cl_dict = create_craigslist_dict(craigslist_soup)
 
-find_deals(cl_dict)
+find_deals(cl_dict, item)
